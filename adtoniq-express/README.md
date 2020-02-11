@@ -15,7 +15,7 @@ npm i adtoniq-express
 
 * * *
 
-For details and exmples visit https://github.com/adtoniq/adtoniq-for-nodejs
+For details and examples visit https://github.com/adtoniq/adtoniq-for-nodejs
 
 
 
