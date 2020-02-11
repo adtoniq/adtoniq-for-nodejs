@@ -33,39 +33,9 @@ var fs = require('fs');
 // Adtoniq code
 // ---------------------------
 
-const Adtoniq = require("benny-adtoniq-express")
+const Adtoniq = require("adtoniq-express")
 const apiKey = "53567ed4-c3ce-415a-a0c5-6b22f47e03f2";
 const adtoniq = new Adtoniq(apiKey);
-
-
-// Gets data for demo page
-function getDemoData() {
-  var header = fs.readFileSync('header.html', 'utf8')
-  var body = fs.readFileSync('body.html', 'utf8')
-  const headCode = adtoniq.getHeadCode({})
-  const data = {
-    title: 'Adtoniq demo'
-    , headCode: headCode
-    , header: header
-    , body: body
-  }
-  return data
-}
-
-// Generates HTML for demo data
-function getHTML(data, res) {
-  var html = `<html>
-  <head>
-  ${data.headCode}
-  ${data.header}
-  </head>
-  <body>
-  ${data.body}
-  </body>
-  </html>
-  `
-  return html
-}
 
 // 
 // Handlers
@@ -93,6 +63,7 @@ app.post('/', function(req, res) {
 // Example using direct HTML
 app.get('/', function(req, res) {
   const data = getDemoData()
+  // Render using plaing HTML generated here
   const html = getHTML(data, res)
   res.send(html)
 })
@@ -100,8 +71,39 @@ app.get('/', function(req, res) {
 // Example using jade
 app.get('/jadedemo', function(req, res) {
   const data = getDemoData()
+  // Render using jade template 'views/demo.jade'
   res.render('demo', data)
 })
+
+
+// Gets data for demo page
+function getDemoData() {
+  var head = fs.readFileSync('head.html', 'utf8')
+  var body = fs.readFileSync('body.html', 'utf8')
+  const headCode = adtoniq.getHeadCode({})
+  const data = {
+    title: 'Adtoniq demo'
+    , headCode: headCode
+    , head: head
+    , body: body
+  }
+  return data
+}
+
+// Generates HTML for demo data
+function getHTML(data, res) {
+  var html = `<html>
+  <head>
+  ${data.headCode}
+  ${data.head}
+  </head>
+  <body>
+  ${data.body}
+  </body>
+  </html>
+  `
+  return html
+}
 
 // ---------------------------
 // End of Adtoniq code
