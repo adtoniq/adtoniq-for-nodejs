@@ -7,10 +7,6 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-// Adtoniq
-var jsonFormat = require('json-format');
-var bodyParser = require('body-parser')
-
 var app = express();
 
 // view engine setup
@@ -27,12 +23,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', usersRouter);
 
 // ---------------------------
+// Utilities
+// ---------------------------
+
+var jsonFormat = require('json-format');
+var fs = require('fs');
+
+// ---------------------------
 // Adtoniq code
 // ---------------------------
 
-var fs = require('fs');
-const Adtoniq = require("./Adtoniq.js")
-
+const Adtoniq = require("benny-adtoniq-express")
 const apiKey = "53567ed4-c3ce-415a-a0c5-6b22f47e03f2";
 const adtoniq = new Adtoniq(apiKey);
 
@@ -71,6 +72,7 @@ function getHTML(data, res) {
 // 
 
 // Handle Adtoniq refresh calls
+// This URL can be costumized
 app.post('/', function(req, res) {
   let sync = true;
   if (sync) {
@@ -96,7 +98,7 @@ app.get('/', function(req, res) {
 })
 
 // Example using jade
-app.get('/demo', function(req, res) {
+app.get('/jadedemo', function(req, res) {
   const data = getDemoData()
   res.render('demo', data)
 })

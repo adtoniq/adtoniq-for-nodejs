@@ -1,6 +1,5 @@
 # README #
-
-This is an Express Node.js project to build a web server demonstrating how to integrate Adtoniq with your Node.js based web server.
+This is a Node.js project demonstrating how to integrate [Adtoniq](https://adtoniq.io) with your Node.js based web server.
 
 Adtoniq for Node.js implements the server-to-server communications required between your webserver and Adtoniq. Once a day Adtoniq will initiate communications with your webserver, using a secure protocol, to transmit the latest JavaScript required to ensure Adtoniq continues functioning as new ad block rules are added, or ad blockers are enhanced with new capabilities. In addition, once you are live with Adtoniq, Adtoniq will monitor your website to determine if ad blockers are adding new filter list rules specifically to block ads on your website, and if they are, Adtoniq will immediately send your site an update to ensure your advertising is not blocked. These updates sent by Adtoniq are cached between updates from Adtoniq - you can read more about caching below.
 
@@ -14,16 +13,9 @@ In most cases, the previous version of JavaScript will continue to function for 
 
 ## Guide to what's here ##
 
-This repository contains a sample in a simple [Express](https://expressjs.com) sever. The file app.js demonstrates how to integrate Adtoniq. This sample page tells you whether or not you are using an ad blocker.
+The [adtonic-express](https://github.com/adtoniq/adtoniq-for-nodejs/tree/master/adtonic-express) repository contains the code to the [Adtonic npm module](https://www.npmjs.com/~adtoniq/adtonic-express) sever.
 
-## How to integrate this with your Node.js web server ##
+The [examples/express](https://github.com/adtoniq/adtoniq-for-nodejs/tree/master/examples/express) repository contains a simple [Express](https://expressjs.com) sever that implements the Adtoniq functionality.
 
-There are two lines you should insert into your pages that show ads: one to inject content into your `<head>` section, and the other to inject content into your `<body>` section. Adtoniq will inject JavaScript and a style sheet into your `<head>`. Currently Adtoniq does not inject content into your `<body>` so if you omitted this line everything would still work, but the next generation of Adtoniq (due out in early 2020) will require content to be injected into the `<body>` section, so you can prepare yourself for the future by adding this line of code now and then seemlessly transition to the next generation of Adtoniq.
-
-You will also need to provide your API key. An easy way to do this is to edit the AdtoniqLauncher.java file to include your API key on the line that looks like this:
-
-		const adtoniq = new Adtoniq(apiKey);
-
-Just keep in mind that if Adtoniq updates this git repository, you'll need to merge this change in again.
-
-That's it! Contact support@adtoniq.com with any questions.
+## Support ##
+Contact support@adtoniq.com with any questions.

@@ -1,11 +1,14 @@
 {
   "name": "adtoniq-express",
-  "description": "Parse HTTP request cookies",
-  "version": "1.0.0",
+  "description": "Connects your JavaScript based website with Adtoniq Cloud services",
+  "version": "1.0.4",
   "author": "Adtoniq (http://adtoniq.com)",
   "contributors": [],
   "license": "MIT",
-  "repository": "adtoniq/adtoniq-express",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adtoniq/adtoniq-for-nodejs"
+  },
   "keywords": [
     "advertising"
   ],
@@ -14,10 +17,15 @@
   },
   "devDependencies": {},
   "files": [
+    "README.md",
     "index.js"
   ],
   "engines": {
     "node": ">= 12.0.0"
   },
-  "scripts": {}
+  "scripts": {},
+  "bugs": {
+  },
+  "homepage": "https://github.com/adtoniq/adtoniq-for-nodejs#readme",
+  "main": "index.js"
 }

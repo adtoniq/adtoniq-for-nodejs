@@ -1,6 +1,15 @@
 'use strict'
+/**
+ * Module dependencies.
+ * @private
+ */
+
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
+/**
+ * Module exports.
+ * @public
+ */
 module.exports = class Adtoniq {
 	// Set the apiKey to the API Key you receive from Adtoniq.
 	apiKey = "";
@@ -40,9 +49,9 @@ module.exports = class Adtoniq {
 		if (ret && ret.length > 0) {
 			this.javaScript = ret;
 			this.updatePageCache();
-			console.log("Adtoniq for Java initialized.");
+			console.log("Adtoniq for JavaScript initialized.");
 		} else
-			console.log("Error initializing Adtoniq for Java.");
+			console.log("Error initializing Adtoniq for JavaScript.");
   }
 	_getLatestJavaScript(nonce, callback) {
 		this._targetURL = "https://integration.adtoniq.com/api/v1"
