@@ -15,24 +15,28 @@ The sample code resides in app.js
 
 ## How to integrate this with your Node.js web server ##
 
-1. First initialize the API with your key.
+1. First set your key.
 ```js
 const apiKey = "Your-API-Key-Here";
+```
+1. Create your adtoniq object.
+```js
 const adtoniq = new Adtoniq(apiKey);
 ```
-
-1. In the `<head>` of any page that you want the API to work you must inject the result of the following code:
+1. Optionaly, with this constructor you can add a function to manually update your cache / CDN when the JavaScript is updated.
 ```js
-const headCode = adtoniq.getHeadCode({})
+updatePageCacheFunction = function(javaScript) {
+  // Add your code here
+}
+const adtoniq = new Adtoniq(apiKey, updatePageCacheFunction);
 ```
-
 1. You must provide a handler for Adtoniq to transmit the latest JavaScript required to ensure Adtoniq continues functioning as new ad block rules are added, or ad blockers are enhanced with new capabilities. That handler will have to perform the following:
 ```js
   adtoniq.processRequest(request.body)
 ```
 
-## Displaying ads ##
-1. The following snippet, included in body.html, illustrates how to include ads in your pages. Adtoniq support will generate the ads to be displayed in class="foo".
+## Displaying other ads ##
+Adtoniq will target existing ads to be replced. If you want to add your own, the following snippet, included in body.html, illustrates how to do this. In this case Adtoniq support will generate the ads to be displayed in class="foo".
 ```html
 <p> Here is my ad
 <div class="foo" style="border: 1px solid red;">
@@ -41,7 +45,7 @@ const headCode = adtoniq.getHeadCode({})
 ```
 
 ## Dealing with adblockers ##
-1. The following snippet, included in head.html, illustrates how to detect whether an addblocker is being used.
+The following snippet, included in head.html, illustrates how to detect whether an adblocker is being used.
 ```html
 <div class="adtoniq_adblocked" style="display:none;color:red;">
   <h1>You are using an ad blocker</h1>
@@ -60,8 +64,6 @@ Runs as standard [Express](https://expressjs.com) server:
 # PORT=...
 bin/www
 ```
-
-Just keep in mind that if Adtoniq updates this git repository, you'll need to merge this change in again.
 
 ## Support ##
 Contact support@adtoniq.com with any questions.

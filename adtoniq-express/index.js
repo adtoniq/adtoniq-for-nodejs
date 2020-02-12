@@ -16,11 +16,14 @@ module.exports = class Adtoniq {
 	
 	javaScript = "";
 	version = "node v12.14.1";
+
+  updatePageCacheFunction = null
 	
 	/** Construct the Adtoniq singleton and initialize it
 	 * @param apiKey Your unique API key, obtained from Adtoniq when you register
 	 */
-	constructor(apiKey) {
+	constructor(apiKey, updatePageCacheFunction) {
+    this.updatePageCacheFunction = updatePageCacheFunction
 		this.apiKey = apiKey;
 		this.getLatestJavaScript();
     if (!!Adtoniq.instance) {
@@ -29,20 +32,23 @@ module.exports = class Adtoniq {
     Adtoniq.instance = this;
 	}
 	
-	processRequest(request, callback) {
+	processRequest(request) {
 		const adtoniqAPIKey = Adtoniq._getQueryArg(request, "adtoniqAPIKey");
 		const adtoniqNonce = Adtoniq._getQueryArg(request, "adtoniqNonce");
 		
 		if (adtoniqAPIKey === this.apiKey && adtoniqNonce.length > 0)
-			this._getLatestJavaScript(adtoniqNonce, callback);
+			this._getLatestJavaScript(adtoniqNonce);
 	}
 	
     
-	/** By default, do nothing to update page caches. Override this method to
+	/** 
+	 *  if updatePageCacheFunction is set call it to
 	 *  manually update your cache / CDN when the JavaScript is updated.
 	 */
 	updatePageCache() {
-		
+		if (this.updatePageCacheFunction) {
+      this.updatePageCacheFunction(this.javaScript)
+    }
 	}
 
   _updateCache(ret) {
@@ -53,15 +59,15 @@ module.exports = class Adtoniq {
 		} else
 			console.log("Error initializing Adtoniq for JavaScript.");
   }
-	_getLatestJavaScript(nonce, callback) {
+	_getLatestJavaScript(nonce) {
 		this._targetURL = "https://integration.adtoniq.com/api/v1"
     this._urlParameters = "operation=update&apiKey="+this.apiKey+"&version="+this.version+"&nonce="+nonce
     const ret = Adtoniq._executePost(this._targetURL, this._urlParameters, )
-    this._updateCache(ret, callback)
+    this._updateCache(ret)
 	}
 
-	getLatestJavaScript(callback) {
-		this._getLatestJavaScript("", callback);
+	getLatestJavaScript() {
+		this._getLatestJavaScript("");
 	}
 
 	getApiKey() {
@@ -109,12 +115,11 @@ module.exports = class Adtoniq {
 	get targetURL() {
     return this._targetURL
   }
-	static _executePost(targetURL,  urlParameters, callback) {
-    const async = callback != null
+	static _executePost(targetURL,  urlParameters) {
 		try {
 			// Create connection
       const request = new XMLHttpRequest();
-      request.open('POST', targetURL, async);  // `false` makes the request synchronous
+      request.open('POST', targetURL, false);  // `false` makes the request synchronous
 			request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 			request.setRequestHeader("User-Agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
@@ -131,30 +136,17 @@ module.exports = class Adtoniq {
 			//serverConnection.setDoOutput(true);
 
 			// Send request
-      if (async) {
-        request.onreadystatechange = function() {//Call a function when the state changes.
-          if (request.readyState == 4) {
-            var response = null;
-            var error = null;
-            if (request.status == 200) {
-              response = request.responseText.trim()
-            } else {
-              error = "Request failed with status "+request.status
-            }
-            callback(request.status, request.responseText)
-          }
-        }
-      }
       request.send(urlParameters);
       var response = null;
       if (request.status == 200) {
         response = request.responseText.trim()
+      } else {
+        console.log("Adtoniq call failed wih status: "+request.status)
       }
 			return response;
 		} catch (e) {
 			console.trace();
       const error = "Request failed: "+e.message
-      if (async) callback(error, null)
 			return null;
 		}
 	}

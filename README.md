@@ -13,7 +13,7 @@ In most cases, the previous version of JavaScript will continue to function for 
 
 ## Guide to what's here ##
 
-The [adtonic-express](https://github.com/adtoniq/adtoniq-for-nodejs/tree/master/adtonic-express) repository contains the code to the [Adtonic npm module](https://www.npmjs.com/~adtoniq/adtonic-express).
+The [adtoniq-express](https://github.com/adtoniq/adtoniq-for-nodejs/tree/master/adtonic-express) repository contains the code to the [Adtonic npm module](https://www.npmjs.com/package/adtoniq-express).
 
 The [examples/express](https://github.com/adtoniq/adtoniq-for-nodejs/tree/master/examples/express) repository contains a simple [Express](https://expressjs.com) sever that implements the Adtoniq functionality.
 

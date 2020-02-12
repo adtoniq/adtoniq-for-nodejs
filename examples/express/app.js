@@ -35,7 +35,17 @@ var fs = require('fs');
 
 const Adtoniq = require("adtoniq-express")
 const apiKey = "53567ed4-c3ce-415a-a0c5-6b22f47e03f2";
-const adtoniq = new Adtoniq(apiKey);
+
+/** 
+ *  Optional. This function will be called to
+ *  manually update your cache / CDN when the JavaScript is updated.
+ */
+updatePageCacheFunction = function(javaScript) {
+  // Add your code here
+  console.log("Updating cache")
+}
+
+const adtoniq = new Adtoniq(apiKey, updatePageCacheFunction);
 
 // 
 // Handlers
@@ -44,20 +54,7 @@ const adtoniq = new Adtoniq(apiKey);
 // Handle Adtoniq refresh calls
 // This URL can be costumized
 app.post('/', function(req, res) {
-  let sync = true;
-  if (sync) {
-    adtoniq.processRequest(req.body)
-    res.status(200).json({error: "", result: "Ok"})
-  } else {
-    // EXPERIMENTAL
-    adtoniq.processRequest(req.body, (error, response) => {
-      if (error) {
-        res.status(200).json({error: error, result: ""})
-      } else {
-        res.status(200).json({error: "", result: "Ok, length: "+response.length})
-      }
-    })
-  }
+  adtoniq.processRequest(req.body)
 })
 
 // Example using direct HTML
