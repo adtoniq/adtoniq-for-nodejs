@@ -11,13 +11,29 @@ npm i adtoniq-express
 
 ## Usage
 
-### Initialize the API with your key. ###
+### Get your API key. ###
 ```js
 const apiKey = "Your-API-Key-Here";
+```
+
+### Initialize the API with your key. ###
+```js
 const adtoniq = new Adtoniq(apiKey);
 ```
 
-### Get header code ###
+Optionaly, use this consructor to add functionality to manually update your cache / CDN when the JavaScript is updated. You will need to implement the following two functions and pass them to the constructor
+```js
+saveScript = function(script) {
+  // save script
+}
+loadScript = function() {
+  // return saved script or null if none saved
+}
+const adtoniq = new Adtoniq(apiKey, saveScript, loadScript);
+```
+
+### Implement functionality ###
+Implement the following on every page handler where you want to integrate Adtoniq functionality.
 ```js
 const headCode = adtoniq.getHeadCode({})
 ```

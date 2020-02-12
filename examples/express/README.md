@@ -23,16 +23,24 @@ const apiKey = "Your-API-Key-Here";
 ```js
 const adtoniq = new Adtoniq(apiKey);
 ```
-1. Optionaly, with this constructor you can add a function to manually update your cache / CDN when the JavaScript is updated.
+1. Optionaly, use this consructor to add functionality to manually update your cache / CDN when the JavaScript is updated. You will need to implement the following two functions and pass them to the constructor.
 ```js
-updatePageCacheFunction = function(javaScript) {
-  // Add your code here
+saveScript = function(script) {
+  // save script
 }
-const adtoniq = new Adtoniq(apiKey, updatePageCacheFunction);
+loadScript = function() {
+  // return saved script or null if none saved
+}
+const adtoniq = new Adtoniq(apiKey, saveScript, loadScript);
 ```
 1. You must provide a handler for Adtoniq to transmit the latest JavaScript required to ensure Adtoniq continues functioning as new ad block rules are added, or ad blockers are enhanced with new capabilities. That handler will have to perform the following:
 ```js
   adtoniq.processRequest(request.body)
+```
+1. Finally, do the following on every page handler where you want to integrate Adtoniq functionality.
+```js
+  const headCode = adtoniq.getHeadCode({})
+  // Inject headCode to the `<head>` section.
 ```
 
 ## Displaying other ads ##

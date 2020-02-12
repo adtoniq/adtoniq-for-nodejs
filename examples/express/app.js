@@ -56,7 +56,7 @@ saveScript = function(script) {
 /** 
  *  This function will be called to return the data from the cache
  */
-loadScript = function(script) {
+loadScript = function() {
   var script = null
   try {
     script = fs.readFileSync(adtoniqCacheFilename, 'utf8')
