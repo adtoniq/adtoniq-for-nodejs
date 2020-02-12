@@ -1,7 +1,7 @@
 {
   "name": "adtoniq-express",
   "description": "Connects your JavaScript based website with Adtoniq Cloud services",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "author": "Adtoniq (http://adtoniq.com)",
   "contributors": [],
   "license": "MIT",

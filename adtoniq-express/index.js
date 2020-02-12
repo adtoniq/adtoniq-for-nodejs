@@ -17,13 +17,15 @@ module.exports = class Adtoniq {
 	javaScript = "";
 	version = "node v12.14.1";
 
-  updatePageCacheFunction = null
+  loadScript = null
+  saveScript = null
 	
 	/** Construct the Adtoniq singleton and initialize it
 	 * @param apiKey Your unique API key, obtained from Adtoniq when you register
 	 */
-	constructor(apiKey, updatePageCacheFunction) {
-    this.updatePageCacheFunction = updatePageCacheFunction
+	constructor(apiKey, saveScript, loadScript) {
+    this.loadScript = loadScript
+    this.saveScript = saveScript
 		this.apiKey = apiKey;
 		this.getLatestJavaScript();
     if (!!Adtoniq.instance) {
@@ -36,34 +38,46 @@ module.exports = class Adtoniq {
 		const adtoniqAPIKey = Adtoniq._getQueryArg(request, "adtoniqAPIKey");
 		const adtoniqNonce = Adtoniq._getQueryArg(request, "adtoniqNonce");
 		
-		if (adtoniqAPIKey === this.apiKey && adtoniqNonce.length > 0)
+    if (adtoniqAPIKey === this.apiKey && adtoniqNonce.length > 0) {
 			this._getLatestJavaScript(adtoniqNonce);
+    }
 	}
 	
     
 	/** 
-	 *  if updatePageCacheFunction is set call it to
+	 *  if loadScript is set call it to
 	 *  manually update your cache / CDN when the JavaScript is updated.
 	 */
 	updatePageCache() {
-		if (this.updatePageCacheFunction) {
-      this.updatePageCacheFunction(this.javaScript)
+		if (this.saveScript) {
+      this.saveScript(this.javaScript)
     }
 	}
 
-  _updateCache(ret) {
-		if (ret && ret.length > 0) {
-			this.javaScript = ret;
-			this.updatePageCache();
-			console.log("Adtoniq for JavaScript initialized.");
-		} else
-			console.log("Error initializing Adtoniq for JavaScript.");
-  }
+	/** 
+	 *  if saveScript is set call it to
+	 *  st the local javascript from the cache / CDN 
+	 */
+	restoreFromPageCache() {
+		if (this.loadScript) {
+      const script = this.loadScript()
+      if (script) {
+        this.javaScript = script
+      }
+    }
+	}
+
 	_getLatestJavaScript(nonce) {
 		this._targetURL = "https://integration.adtoniq.com/api/v1"
     this._urlParameters = "operation=update&apiKey="+this.apiKey+"&version="+this.version+"&nonce="+nonce
     const ret = Adtoniq._executePost(this._targetURL, this._urlParameters, )
-    this._updateCache(ret)
+		if (ret && ret.length > 0) {
+			this.javaScript = ret;
+			this.updatePageCache();
+			this.restoreFromPageCache();
+			console.log("Adtoniq for JavaScript initialized.");
+		} else
+			console.log("Error initializing Adtoniq for JavaScript.");
 	}
 
 	getLatestJavaScript() {

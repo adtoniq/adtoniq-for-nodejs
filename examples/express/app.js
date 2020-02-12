@@ -37,15 +37,41 @@ const Adtoniq = require("adtoniq-express")
 const apiKey = "53567ed4-c3ce-415a-a0c5-6b22f47e03f2";
 
 /** 
- *  Optional. This function will be called to
- *  manually update your cache / CDN when the JavaScript is updated.
+ *  Optional. This functionanility demonstrates how to implement 
+ *  a manually update your cache / CDN when the JavaScript is updated.
+ *  This example uses a local file
  */
-updatePageCacheFunction = function(javaScript) {
-  // Add your code here
-  console.log("Updating cache")
+const adtoniqCacheFilename = "adtoniqCache"
+/** 
+ *  This function will be called to cache the data
+ */
+saveScript = function(script) {
+  try {
+    fs.writeFileSync(adtoniqCacheFilename, script, 'utf8')
+  } catch(e) {
+    console.log("Could not write to cache: "+e)
+  }
 }
 
-const adtoniq = new Adtoniq(apiKey, updatePageCacheFunction);
+/** 
+ *  This function will be called to return the data from the cache
+ */
+loadScript = function(script) {
+  var script = null
+  try {
+    script = fs.readFileSync(adtoniqCacheFilename, 'utf8')
+  } catch(e) {
+    console.log("Could not read from cache: "+e)
+  }
+  return script
+}
+
+const adtoniq = new Adtoniq(apiKey, saveScript, loadScript);
+/* 
+ * If you do not want to override caching just use 
+const adtoniq = new Adtoniq(apiKey);
+ */
+
 
 // 
 // Handlers
