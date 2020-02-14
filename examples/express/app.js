@@ -80,7 +80,9 @@ const adtoniq = new Adtoniq(apiKey);
 // Handle Adtoniq refresh calls
 // This URL can be costumized
 app.post('/', function(req, res) {
+  console.log(req.body)
   adtoniq.processRequest(req.body)
+  res.send('Ok');
 })
 
 // Example using direct HTML
