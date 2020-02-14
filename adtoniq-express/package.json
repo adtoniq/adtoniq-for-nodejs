@@ -1,7 +1,7 @@
 {
   "name": "adtoniq-express",
   "description": "Connects your JavaScript based website with Adtoniq Cloud services",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": "Adtoniq (http://adtoniq.com)",
   "contributors": [],
   "license": "MIT",
@@ -10,7 +10,7 @@
     "url": "git+https://github.com/adtoniq/adtoniq-for-nodejs"
   },
   "keywords": [
-    "advertising"
+    "adblock, adblocker, ad blocker, ad block, ad blocking, blocker, advertisement, ad"
   ],
   "dependencies": {
     "xmlhttprequest": "^1.8.0"
