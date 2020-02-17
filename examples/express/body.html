@@ -1,10 +1,129 @@
 <p> Here is my ad
 <div class="foo" style="border: 1px solid red;">
-<br>I am an ad!
+<br>I am a car ad!
 </div>
 
 
 <p> Here is my other ad
+<div class="zzfoo2" style="border: 1px solid red;">
+one
+<div class="zfoo2" style="border: 1px solid red;">
+two
 <div class="foo2" style="border: 1px solid red;">
 <br>I am anotyher ad!
 </div>
+</div>
+</div>
+<script>
+
+function countREMatches(text, re) {
+  return (text.match(re) || []).length;
+}
+
+function countAllREMatches(text, allRE, matches) {
+  for (i in allRE) {
+    const count = countREMatches(text, allRE[i])
+    matches[i] += count
+  }
+}
+
+// TODO: parse these https://ogp.me/ 
+// <meta property="og:title" content="The Rock" />
+// og:description 
+function walkPage(obj, allRE, matches) {
+  var obj = obj || document.getElementsByTagName('body')[0];
+  if (obj.ELEMENT_NODE === 1) {
+    var child = obj.firstChild;
+    while (child) {
+      //console.log(child.hasChildNodes())
+      //walkPage(child, allRE, matches)
+      if (child.nodeType === 1 && child.nodeName != 'SCRIPT' ) {
+        if (child.innerText !== undefined) {
+          const text = child.innerText
+          console.log(text)
+          countAllREMatches(text, allRE, matches)
+        }
+      }
+      child = child.nextSibling;
+    }
+  }
+}
+function theDOMElementWalker(node) {
+    if (node.ELEMENT_NODE === 1) {
+        var child = node.firstChild;
+        while (child) {
+        console.log(child.tagName);
+            //theDOMElementWalker(child);
+            if (child.nodeType === 1 && child.nodeName != 'SCRIPT' ) {
+                console.log(node.nodeName+" = "+node.innerText.replace(/\n/,'g'))
+            }
+            child = child.nextSibling;
+        }
+    }
+}
+
+/*
+ * Keyword parsing
+ */
+function buildKeywordRE(allKeywords) {
+  const allRE = []
+  for (k in allKeywords) {
+    if (!allKeywords[k]) continue
+    const keywords = allKeywords[k].split(/ /)
+    if (keywords.length == 0) return null
+    var reText = '(('+keywords[0]+'[s]?\\W+)'
+    for (i = 1; i < keywords.length; i++) {
+      reText += '|('+keywords[i]+'[s]?\\W+)'
+    }
+    reText += ")"
+    allRE.push(new RegExp(reText, 'gi'))
+  }
+  return allRE
+}
+
+function initMatches(allKeywords) {
+  const matches = [];
+  for (i in allKeywords) matches.push(0)
+  return matches
+}
+
+function getWeights(counts) {
+  const weights = []
+  var totalWeight = 0.0
+  for (i in counts) {
+    totalWeight += counts[i]
+  }
+  var total = 0.0
+  for (i in matches) {
+    weight = matches[i]/totalWeight
+    weights.push(weight+total)
+    total += weight
+  }
+  return weights
+}
+
+function getRandomMatch(weights) {
+  const random = Math.random()
+  var match = 0
+  while (match < weights.length-1 && random > weights[match]) {
+    match++
+  }
+  return match
+}
+
+allKeywords = ["you car train automobile", "ad car bicycle motorcycle", "radio tv computer car"]
+console.log("allKeywords: "+allKeywords)
+console.log("=============== Text found ============== ")
+const matches = initMatches(allKeywords)
+allRE =  buildKeywordRE(allKeywords)
+
+walkPage(null, allRE, matches)
+console.log("Matches per keyword set: "+matches)
+const weights = getWeights(matches)
+console.log("Weights per keyword set: "+weights)
+for (var i=0; i<10; i++) {
+  const match = getRandomMatch(weights)
+  console.log("Match: "+match)
+}
+//theDOMElementWalker(document.getElementsByTagName('body')[0])
+</script>
