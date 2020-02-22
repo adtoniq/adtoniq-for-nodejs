@@ -35,49 +35,34 @@ var fs = require('fs');
 
 const Adtoniq = require("adtoniq-express")
 const apiKey = "53567ed4-c3ce-415a-a0c5-6b22f47e03f2";
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
-
 
 /** 
  *  Optional. This functionanility demonstrates how to implement 
  *  a manually update your cache / CDN when the JavaScript is updated.
  *  This example uses a local file
  */
-const adtoniqCacheFilename = "adtoniqCache.big"
+const adtoniqCacheFilename = "adtoniqCache"
 /** 
  *  This function will be called to cache the data
  */
-saveScript = function(script) {
-  try {
-    fs.writeFileSync(adtoniqCacheFilename, script, 'utf8')
-  } catch(e) {
-    console.log("Could not write to cache: "+e)
-  }
+saveScript = function(script, callback) {
+  fs.writeFile(adtoniqCacheFilename, script, 'utf8', () => {
+    callback() 
+  })
 }
 
 /** 
  *  This function will be called to return the data from the cache
  */
-loadScript = function() {
-  var script = null
-  try {
-    script = fs.readFileSync(adtoniqCacheFilename, 'utf8')
-  } catch(e) {
-    console.log("Could not read from cache: "+e)
-  }
-  return script
+loadScript = function(callback) {
+  fs.readFile(adtoniqCacheFilename, 'utf8', (error, script) => {
+    callback(script)
+  })
 }
 
-//const adtoniq = new Adtoniq(apiKey, saveScript, loadScript);
-const adtoniq = new Adtoniq(apiKey);
+const adtoniq = new Adtoniq(apiKey, saveScript, loadScript);
 /* 
- * If you do not want to override caching just use 
+ * If you do not want to override caching use 
 const adtoniq = new Adtoniq(apiKey);
  */
 
@@ -89,15 +74,14 @@ const adtoniq = new Adtoniq(apiKey);
 // Handle Adtoniq refresh calls
 // This URL can be costumized
 app.post('/', function(req, res) {
-  //console.log(req.body)
-  const headCode = adtoniq.processRequest(req.body, (response) => {
+  adtoniq.processRequest(req.body, (headCode) => {
     res.send('Ok');
   })
 })
 
 // Example using direct HTML
 app.get('/', function(req, res) {
-  const headCode = adtoniq.getHeadCode({}, (headCode) => {
+  adtoniq.getHeadCode({}, (headCode) => {
     const data = getDemoData(headCode)
     // Render using plaing HTML generated here
     const html = getHTML(data, res)
@@ -108,7 +92,7 @@ app.get('/', function(req, res) {
 
 // Example using jade
 app.get('/jadedemo', function(req, res) {
-  const headCode = adtoniq.getHeadCode({}, (headCode) => {
+  adtoniq.getHeadCode({}, (headCode) => {
     const data = getDemoData(headCode)
     // Render using jade template 'views/demo.jade'
     res.render('demo', data)

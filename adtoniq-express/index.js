@@ -50,23 +50,25 @@ module.exports = class Adtoniq {
 	 *  if loadScript is set call it to
 	 *  manually update your cache / CDN when the JavaScript is updated.
 	 */
-	updatePageCache() {
+	_updatePageCache(callback) {
 		if (this.saveScript) {
-      this.saveScript(this.javaScript)
-    }
+      this.saveScript(this.javaScript, callback)
+    } else callback()
 	}
 
 	/** 
 	 *  if saveScript is set call it to
 	 *  st the local javascript from the cache / CDN 
 	 */
-	restoreFromPageCache() {
+	_restoreFromPageCache(callback) {
 		if (this.loadScript) {
-      const script = this.loadScript()
-      if (script) {
-        this.javaScript = script
-      }
-    }
+      this.loadScript((script) => {
+        if (script) {
+          this.javaScript = script
+        }
+        callback()
+      })
+    } else callback()
 	}
 
 	_getLatestJavaScript(nonce, callback) {
@@ -74,15 +76,17 @@ module.exports = class Adtoniq {
     this._urlParameters = "operation=update&apiKey="+this.apiKey+"&version="+this.version+"&nonce="+nonce
     const ret = Adtoniq._executePost(this._targetURL, this._urlParameters, (ret) => {
       if (ret && ret.length > 0) {
-  console.log("ret: "+ret.length);
         this.javaScript = ret;
-        this.updatePageCache();
-        this.restoreFromPageCache();
-        console.log("Adtoniq for JavaScript initialized.");
+        this._updatePageCache(() => {
+          this._restoreFromPageCache(() => {
+            console.log("Adtoniq for JavaScript initialized.");
+            callback(ret)
+          })
+        });
       } else {
         console.log("Error initializing Adtoniq for JavaScript.");
+        callback(null)
       }
-      callback(ret)
     })
 	}
 
@@ -112,8 +116,6 @@ module.exports = class Adtoniq {
 	 */
 	getHeadCode(request, callback) {
 		this.processRequest(request, callback);
-//console.log("HeadCode: "+this.getJavaScript().length);
-		//return this.getJavaScript();
 	}
 	
 	/** Returns the HTML that should be inserted into the body section of the website
@@ -154,7 +156,7 @@ module.exports = class Adtoniq {
 			//serverConnection.setDoInput(true);
 			//serverConnection.setDoOutput(true);
       request.onreadystatechange = function() {//Call a function when the state changes.
-        if (request.readyState == 4) {
+        if (request.readyState == 4) { // DONE
           var response = null;
           var error = null;
           if (request.status == 200) {
