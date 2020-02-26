@@ -19,11 +19,11 @@ The sample code resides in app.js
 ```js
 const apiKey = "Your-API-Key-Here";
 ```
-1. Create your adtoniq object.
+2. Create your adtoniq object.
 ```js
 const adtoniq = new Adtoniq(apiKey);
 ```
-1. Optionaly, use this consructor to add functionality to manually update your cache / CDN when the JavaScript is updated. You will need to implement the following two functions and pass them to the constructor.
+3. Optionaly, use this consructor to add functionality to manually update your cache / CDN when the JavaScript is updated. You will need to implement the following two functions and pass them to the constructor.
 ```js
 saveScript = function(script, callback) {
   // save script
@@ -34,12 +34,12 @@ loadScript = function(callback) {
 }
 const adtoniq = new Adtoniq(apiKey, saveScript, loadScript);
 ```
-1. You must provide a handler for Adtoniq to transmit the latest JavaScript required to ensure Adtoniq continues functioning as new ad block rules are added, or ad blockers are enhanced with new capabilities. That handler will have to perform the following:
+4. You must provide a handler for Adtoniq to transmit the latest JavaScript required to ensure Adtoniq continues functioning as new ad block rules are added, or ad blockers are enhanced with new capabilities. That handler will have to perform the following:
 ```js
 adtoniq.processRequest(request.body, (headCode) => {
 })
 ```
-1. Finally, do the following on every page handler where you want to integrate Adtoniq functionality.
+5. Finally, do the following on every page handler where you want to integrate Adtoniq functionality.
 ```js
 adtoniq.getHeadCode({}, (headCode) => {
     // Inject headCode to the `<head>` section.
