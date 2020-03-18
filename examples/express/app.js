@@ -45,30 +45,24 @@ const adtoniqCacheFilename = "adtoniqCache"
 /** 
  *  This function will be called to cache the data
  */
-saveScript = function(script) {
-  try {
-    fs.writeFileSync(adtoniqCacheFilename, script, 'utf8')
-  } catch(e) {
-    console.log("Could not write to cache: "+e)
-  }
+saveScript = function(script, callback) {
+  fs.writeFile(adtoniqCacheFilename, script, 'utf8', () => {
+    callback() 
+  })
 }
 
 /** 
  *  This function will be called to return the data from the cache
  */
-loadScript = function() {
-  var script = null
-  try {
-    script = fs.readFileSync(adtoniqCacheFilename, 'utf8')
-  } catch(e) {
-    console.log("Could not read from cache: "+e)
-  }
-  return script
+loadScript = function(callback) {
+  fs.readFile(adtoniqCacheFilename, 'utf8', (error, script) => {
+    callback(script)
+  })
 }
 
 const adtoniq = new Adtoniq(apiKey, saveScript, loadScript);
 /* 
- * If you do not want to override caching just use 
+ * If you do not want to override caching use 
 const adtoniq = new Adtoniq(apiKey);
  */
 
@@ -80,32 +74,36 @@ const adtoniq = new Adtoniq(apiKey);
 // Handle Adtoniq refresh calls
 // This URL can be costumized
 app.post('/', function(req, res) {
-  console.log(req.body)
-  adtoniq.processRequest(req.body)
-  res.send('Ok');
+  adtoniq.processRequest(req.body, (headCode) => {
+    res.send('Ok');
+  })
 })
 
 // Example using direct HTML
 app.get('/', function(req, res) {
-  const data = getDemoData()
-  // Render using plaing HTML generated here
-  const html = getHTML(data, res)
-  res.send(html)
+  adtoniq.getHeadCode({}, (headCode) => {
+    const data = getDemoData(headCode)
+    // Render using plaing HTML generated here
+    const html = getHTML(data, res)
+    //sleep(30000);
+    res.send(html)
+  })
 })
 
 // Example using jade
 app.get('/jadedemo', function(req, res) {
-  const data = getDemoData()
-  // Render using jade template 'views/demo.jade'
-  res.render('demo', data)
+  adtoniq.getHeadCode({}, (headCode) => {
+    const data = getDemoData(headCode)
+    // Render using jade template 'views/demo.jade'
+    res.render('demo', data)
+  })
 })
 
 
 // Gets data for demo page
-function getDemoData() {
+function getDemoData(headCode) {
   var head = fs.readFileSync('head.html', 'utf8')
   var body = fs.readFileSync('body.html', 'utf8')
-  const headCode = adtoniq.getHeadCode({})
   const data = {
     title: 'Adtoniq demo'
     , headCode: headCode
