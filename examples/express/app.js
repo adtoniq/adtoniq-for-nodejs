@@ -34,37 +34,48 @@ var fs = require('fs');
 // ---------------------------
 
 const Adtoniq = require("adtoniq-express")
-const apiKey = "53567ed4-c3ce-415a-a0c5-6b22f47e03f2";
+const apiKey = process.env.ADTONIQ_API_KEY;
+if (!apiKey) {
+  console.log('ADTONIQ_API_KEY must be set. Consult the documentation or contact support@adtoniq.com for more information');
+  process.exit(1);
+}
 
 /** 
  *  Optional. This functionanility demonstrates how to implement 
  *  a manually update your cache / CDN when the JavaScript is updated.
  *  This example uses a local file
- */
+
 const adtoniqCacheFilename = "adtoniqCache"
+ */
+
 /** 
  *  This function will be called to cache the data
- */
+
 saveScript = function(script, callback) {
   fs.writeFile(adtoniqCacheFilename, script, 'utf8', () => {
     callback() 
   })
 }
+ */
 
 /** 
  *  This function will be called to return the data from the cache
- */
+
 loadScript = function(callback) {
   fs.readFile(adtoniqCacheFilename, 'utf8', (error, script) => {
     callback(script)
   })
 }
+ */
+/* 
+ * If you want to override caching use 
 
 const adtoniq = new Adtoniq(apiKey, saveScript, loadScript);
-/* 
- * If you do not want to override caching use 
-const adtoniq = new Adtoniq(apiKey);
  */
+
+// For default caching use this
+const adtoniq = new Adtoniq(apiKey);
+
 
 
 // 

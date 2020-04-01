@@ -15,9 +15,9 @@ The sample code resides in app.js
 
 ## How to integrate this with your Node.js web server ##
 
-1. First set your key.
-```js
-const apiKey = "Your-API-Key-Here";
+1. First set the environment variable to your API key
+```bash
+export ADTONIQ_API_KEY="ojr-api-key"
 ```
 2. Create your adtoniq object.
 ```js
