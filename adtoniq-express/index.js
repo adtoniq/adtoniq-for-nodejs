@@ -11,19 +11,19 @@ const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
  * @public
  */
 module.exports = class Adtoniq {
-	// Set the apiKey to the API Key you receive from Adtoniq.
-	apiKey = "";
-	
-	javaScript = "";
-	version = "node v12.14.1";
-
-  loadScript = null
-  saveScript = null
+	// For node 10 compatibility do not declare variables
+	//apiKey
+	//javaScript
+	//version
+  //loadScript
+  //saveScript
 	
 	/** Construct the Adtoniq singleton and initialize it
 	 * @param apiKey Your unique API key, obtained from Adtoniq when you register
 	 */
 	constructor(apiKey, saveScript, loadScript) {
+    this.javaScript = "";
+	  this.version = "1.1.1";
     this.loadScript = loadScript
     this.saveScript = saveScript
 		this.apiKey = apiKey;
@@ -156,7 +156,7 @@ module.exports = class Adtoniq {
 			//serverConnection.setDoInput(true);
 			//serverConnection.setDoOutput(true);
       request.onreadystatechange = function() {//Call a function when the state changes.
-        if (request.readyState == 4) { // DONE
+        if (request.readyState == 4) {
           var response = null;
           var error = null;
           if (request.status == 200) {
