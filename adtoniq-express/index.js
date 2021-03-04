@@ -23,7 +23,7 @@ module.exports = class Adtoniq {
 	 */
 	constructor(apiKey, saveScript, loadScript) {
     this.javaScript = "";
-	  this.version = "1.1.1";
+	  this.version = "NodeJS 1.1.2";
     this.loadScript = loadScript
     this.saveScript = saveScript
 		this.apiKey = apiKey;
